@@ -15,7 +15,7 @@ Search, analyze, and transcribe videos using natural language with [Claude Code]
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/video-db/agent-toolkit.git
+git clone https://github.com/thexshivam/agent-toolkit.git
 cd agent-toolkit/skills
 ```
 
