@@ -95,22 +95,23 @@ results = collection.search(query="customer feedback")
 
 ## Scripts
 
-Use `scripts/run.sh` for automatic environment setup:
+Use the unified `run.sh` from the skills directory:
 ```bash
-# Search by YouTube URL (auto-uploads if needed)
-./scripts/run.sh '{"url": "https://youtu.be/xxx", "query": "topic"}'
+# From the skills/ directory:
+./run.sh search '{"url": "https://youtu.be/xxx", "query": "topic"}'
 
 # Search by video ID
-./scripts/run.sh '{"video_id": "vid_123", "query": "pricing"}'
+./run.sh search '{"video_id": "vid_123", "query": "pricing"}'
 
 # Search entire collection
-./scripts/run.sh '{"query": "product demo", "scope": "collection"}'
+./run.sh search '{"query": "product demo", "scope": "collection"}'
 ```
 
 Or run directly with Python (requires venv activated):
 ```bash
+cd skills/
 source venv/bin/activate
-python scripts/search.py '{"url": "https://youtu.be/xxx", "query": "topic"}'
+python videodb-search/scripts/search.py '{"url": "https://youtu.be/xxx", "query": "topic"}'
 ```
 
 ## Parameters
