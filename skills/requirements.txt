@@ -1,0 +1,3 @@
+videodb
+python-dotenv
+pyyaml
