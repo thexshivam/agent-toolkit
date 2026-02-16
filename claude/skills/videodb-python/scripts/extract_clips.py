@@ -75,7 +75,6 @@ def main() -> None:
 
     try:
         import videodb
-        from videodb import Timeline, VideoAsset
     except ImportError:
         print("[extract_clips] ERROR: videodb is not installed. Run scripts/setup_venv.py first.", file=sys.stderr)
         sys.exit(1)
@@ -89,22 +88,16 @@ def main() -> None:
 
         if args.compile:
             # Compile all clips into a single stream
-            timeline = Timeline(conn)
             for i, (start, end) in enumerate(timestamps, 1):
                 print(f"  Clip {i}: {start:.1f}s - {end:.1f}s")
-                asset = VideoAsset(asset_id=video.id, start=start, end=end)
-                timeline.add_inline(asset)
 
-            stream_url = timeline.generate_stream()
+            stream_url = video.generate_stream(timeline=timestamps)
             print(f"\n[extract_clips] Compiled stream URL: {stream_url}")
         else:
             # Generate individual clip streams
             for i, (start, end) in enumerate(timestamps, 1):
                 print(f"  Clip {i}: {start:.1f}s - {end:.1f}s")
-                timeline = Timeline(conn)
-                asset = VideoAsset(asset_id=video.id, start=start, end=end)
-                timeline.add_inline(asset)
-                stream_url = timeline.generate_stream()
+                stream_url = video.generate_stream(timeline=[(start, end)])
                 print(f"    -> {stream_url}")
 
         print(f"\n[extract_clips] Done.")
