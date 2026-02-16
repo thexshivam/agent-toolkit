@@ -9,6 +9,8 @@ Upload a long video, search for key moments, and compile them into a highlight r
 ```python
 import videodb
 from videodb import SearchType
+from videodb.timeline import Timeline
+from videodb.asset import VideoAsset
 
 conn = videodb.connect()
 coll = conn.get_collection()
@@ -32,8 +34,6 @@ for topic in topics:
     all_shots.extend(results.get_shots())
 
 # 4. Build a timeline from the shots
-from videodb import Timeline, VideoAsset
-
 timeline = Timeline(conn)
 for shot in all_shots:
     asset = VideoAsset(asset_id=shot.video_id, start=shot.start, end=shot.end)
@@ -93,11 +93,10 @@ python scripts/batch_upload.py --urls urls.txt --collection "Training Videos"
 
 ## Add Professional Polish to Raw Footage
 
-Upload raw footage, transcode, add subtitles, and generate a thumbnail:
+Upload raw footage, add subtitles, and generate a thumbnail:
 
 ```python
 import videodb
-from videodb import MediaResolution
 
 conn = videodb.connect()
 coll = conn.get_collection()
@@ -111,16 +110,12 @@ transcript = video.get_transcript_text()
 print(f"Transcript ({len(transcript)} chars): {transcript[:200]}...")
 
 # 3. Add auto-subtitles
-video.add_subtitle()
+stream_url = video.add_subtitle()
 
-# 4. Generate optimized stream
-stream_url = video.generate_stream(resolution=MediaResolution.R_720p)
-
-# 5. Generate thumbnail
+# 4. Generate thumbnail
 thumbnail = video.generate_thumbnail(time=15.0)
 
-print(f"Stream: {stream_url}")
-print(f"Thumbnail: {thumbnail.url}")
+print(f"Stream with subtitles: {stream_url}")
 ```
 
 ## Search and Extract Specific Clips
@@ -129,7 +124,7 @@ Find moments and download them as individual clips:
 
 ```python
 import videodb
-from videodb import SearchType, Timeline, VideoAsset
+from videodb import SearchType
 
 conn = videodb.connect()
 coll = conn.get_collection()
@@ -162,10 +157,8 @@ Combine generative AI with existing video:
 
 ```python
 import videodb
-from videodb import (
-    GenerativeAIEngine, TextGenerationEngine, Timeline,
-    VideoAsset, AudioAsset, ImageAsset,
-)
+from videodb.timeline import Timeline
+from videodb.asset import VideoAsset, AudioAsset, ImageAsset
 
 conn = videodb.connect()
 coll = conn.get_collection()
@@ -173,36 +166,36 @@ video = coll.get_video("your-video-id")
 
 # 1. Generate a summary of the video
 video.index_spoken_words()
-summary = video.generate_text(
-    prompt="Create a concise 2-sentence summary of this video",
-    engine=TextGenerationEngine.OPENAI,
+transcript_text = video.get_transcript_text()
+summary = coll.generate_text(
+    prompt=f"Create a concise 2-sentence summary of this video:\n{transcript_text}",
+    model_name="pro",
 )
-print(f"Summary: {summary.text}")
+print(f"Summary: {summary}")
 
 # 2. Generate background music
-music = coll.generate_audio(
+music = coll.generate_music(
     prompt="calm corporate background music, professional and modern",
-    engine=GenerativeAIEngine.ELEVENLABS_MUSIC,
     duration=int(video.length),
 )
 
 # 3. Generate intro image
 intro = coll.generate_image(
     prompt="modern professional title card with abstract tech background",
-    engine=GenerativeAIEngine.DALLE3,
+    aspect_ratio="16:9",
 )
 
 # 4. Combine into a polished timeline
 timeline = Timeline(conn)
 
-# Add intro image (5 seconds)
-timeline.add_inline(ImageAsset(asset_id=intro.id, duration=5))
-
 # Add the main video
 timeline.add_inline(VideoAsset(asset_id=video.id))
 
-# Overlay background music (lower volume)
-timeline.add_overlay(0, AudioAsset(asset_id=music.id, volume=0.3))
+# Overlay intro image for first 5 seconds
+timeline.add_overlay(0, ImageAsset(asset_id=intro.id, duration=5, width=1280, height=720, x=0, y=0))
+
+# Overlay background music (mixed with original audio)
+timeline.add_overlay(0, AudioAsset(asset_id=music.id, disable_other_tracks=False))
 
 # 5. Generate final stream
 stream_url = timeline.generate_stream()

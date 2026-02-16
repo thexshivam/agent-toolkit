@@ -1,6 +1,8 @@
 ---
 name: videodb-python
 description: Process videos using VideoDB Python SDK. Upload local files, URLs, or YouTube videos. Transcode, add subtitles, generate transcripts and thumbnails, search within videos, and create video compilations. Use for Python projects working with video processing, video search, or video editing.
+allowed-tools: Read Grep Glob Bash(python:*)
+argument-hint: "[task description]"
 ---
 
 # VideoDB Python SDK
@@ -79,25 +81,17 @@ stream_url = video.generate_stream()
 video.play()  # opens in browser
 ```
 
-### Transcode
-
-```python
-from videodb import MediaResolution
-
-# Change resolution
-video.generate_stream(resolution=MediaResolution.R_360p)
-
-# Available: R_360p, R_480p, R_720p, R_1080p
-```
-
 ### Add Subtitles
 
 ```python
-# Auto-generate subtitles from transcript
-video.add_subtitle()
+from videodb import SubtitleStyle
 
-# Stream with subtitles
-stream_url = video.generate_stream()
+# Auto-generate subtitles from transcript
+video.index_spoken_words()
+stream_url = video.add_subtitle()
+
+# With custom styling
+stream_url = video.add_subtitle(style=SubtitleStyle(font_size=22))
 ```
 
 ### Transcripts
@@ -158,16 +152,14 @@ See [SEARCH.md](SEARCH.md) for the complete search and indexing guide.
 
 ## Generative Media
 
-Create AI-generated images, videos, audio, music, sound effects, and voice content.
+Create AI-generated images, videos, music, sound effects, voice, and text content.
 
 ### Quick Start
 
 ```python
-from videodb import GenerativeAIEngine
-
 image = coll.generate_image(
     prompt="a sunset over mountains",
-    engine=GenerativeAIEngine.DALLE3,
+    aspect_ratio="16:9",
 )
 ```
 
@@ -193,10 +185,66 @@ videos = coll.get_videos()
 
 See [REFERENCE.md](REFERENCE.md#collections) for complete collection management.
 
+## Timeline Editing
+
+Compose videos from multiple clips, add text/image/audio overlays, and trim segments — all non-destructive.
+
+### Quick Start
+
+```python
+from videodb.timeline import Timeline
+from videodb.asset import VideoAsset, TextAsset, TextStyle
+
+timeline = Timeline(conn)
+timeline.add_inline(VideoAsset(asset_id=video.id, start=10, end=30))
+timeline.add_overlay(0, TextAsset(text="The End", duration=3, style=TextStyle(fontsize=36)))
+stream_url = timeline.generate_stream()
+```
+
+See [EDITOR.md](EDITOR.md) for the complete timeline editing guide.
+
+## Meeting Recording Analysis
+
+Process meeting recordings to extract transcripts, generate summaries, identify action items and decisions.
+
+### Quick Start
+
+```python
+meeting.index_spoken_words()
+text = meeting.get_transcript_text()
+
+summary = coll.generate_text(
+    prompt=f"Summarize this meeting with action items and decisions:\n{text}",
+    model_name="pro",
+)
+print(summary)
+```
+
+See [MEETINGS.md](MEETINGS.md) for the complete meeting recording guide.
+
+## Real-Time Streams
+
+Generate streamable HLS URLs from videos, timelines, and search results for live playback.
+
+### Quick Start
+
+```python
+stream_url = video.generate_stream()
+# Or from a timeline composition
+stream_url = timeline.generate_stream()
+# Or from search results
+stream_url = results.compile()
+```
+
+See [RTSTREAM.md](RTSTREAM.md) for the complete real-time streams guide.
+
 ## Next Steps
 
 For advanced features, see:
 - [SEARCH.md](SEARCH.md) - Search and indexing (semantic, keyword, scene-based)
+- [EDITOR.md](EDITOR.md) - Timeline editing (overlays, trim, multi-clip composition)
+- [MEETINGS.md](MEETINGS.md) - Meeting analysis (transcripts, summaries, action items)
+- [RTSTREAM.md](RTSTREAM.md) - Real-time streams (HLS, dynamic composition, playback)
 - [GENERATIVE.md](GENERATIVE.md) - AI-generated media (images, video, audio, voice)
 - [REFERENCE.md](REFERENCE.md) - Complete API reference
 - [USE_CASES.md](USE_CASES.md) - End-to-end workflow examples
