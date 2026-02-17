@@ -167,11 +167,11 @@ video = coll.get_video("your-video-id")
 # 1. Generate a summary of the video
 video.index_spoken_words()
 transcript_text = video.get_transcript_text()
-summary = coll.generate_text(
+result = coll.generate_text(
     prompt=f"Create a concise 2-sentence summary of this video:\n{transcript_text}",
     model_name="pro",
 )
-print(f"Summary: {summary}")
+print(f"Summary: {result['output']}")
 
 # 2. Generate background music
 music = coll.generate_music(

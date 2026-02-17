@@ -226,11 +226,11 @@ Process meeting recordings to extract transcripts, generate summaries, identify 
 meeting.index_spoken_words()
 text = meeting.get_transcript_text()
 
-summary = coll.generate_text(
+result = coll.generate_text(
     prompt=f"Summarize this meeting with action items and decisions:\n{text}",
     model_name="pro",
 )
-print(summary)
+print(result["output"])
 ```
 
 See [MEETINGS.md](MEETINGS.md) for the complete meeting recording guide.

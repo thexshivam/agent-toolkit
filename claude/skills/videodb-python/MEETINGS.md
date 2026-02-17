@@ -47,7 +47,7 @@ Use `coll.generate_text()` to run LLM analysis on meeting content. This is a met
 ```python
 text = meeting.get_transcript_text()
 
-summary = coll.generate_text(
+result = coll.generate_text(
     prompt=(
         f"Given this meeting transcript:\n{text}\n\n"
         "Summarize this meeting. Include:\n"
@@ -58,7 +58,7 @@ summary = coll.generate_text(
     ),
     model_name="pro",
 )
-print(summary)
+print(result["output"])
 ```
 
 ### Extract Action Items
@@ -66,7 +66,7 @@ print(summary)
 ```python
 text = meeting.get_transcript_text()
 
-actions = coll.generate_text(
+result = coll.generate_text(
     prompt=(
         f"Given this meeting transcript:\n{text}\n\n"
         "Extract all action items from this meeting. "
@@ -78,7 +78,7 @@ actions = coll.generate_text(
     ),
     model_name="pro",
 )
-print(actions)
+print(result["output"])
 ```
 
 ### Extract Decisions
@@ -86,7 +86,7 @@ print(actions)
 ```python
 text = meeting.get_transcript_text()
 
-decisions = coll.generate_text(
+result = coll.generate_text(
     prompt=(
         f"Given this meeting transcript:\n{text}\n\n"
         "Identify all decisions made during this meeting. "
@@ -98,7 +98,7 @@ decisions = coll.generate_text(
     ),
     model_name="pro",
 )
-print(decisions)
+print(result["output"])
 ```
 
 ### Full Structured Analysis
@@ -108,7 +108,7 @@ Combine everything into a single structured output:
 ```python
 text = meeting.get_transcript_text()
 
-analysis = coll.generate_text(
+result = coll.generate_text(
     prompt=(
         f"Given this meeting transcript:\n{text}\n\n"
         "Analyze this meeting and provide a structured report:\n\n"
@@ -125,7 +125,7 @@ analysis = coll.generate_text(
     ),
     model_name="pro",
 )
-print(analysis)
+print(result["output"])
 ```
 
 ### Using Different Model Tiers
@@ -232,7 +232,7 @@ meeting.index_scenes(
 # Get transcript and use collection LLM for combined analysis
 text = meeting.get_transcript_text()
 
-analysis = coll.generate_text(
+result = coll.generate_text(
     prompt=(
         f"Given this meeting transcript:\n{text}\n\n"
         "Analyze this meeting using the spoken content. "
@@ -240,7 +240,7 @@ analysis = coll.generate_text(
     ),
     model_name="pro",
 )
-print(analysis)
+print(result["output"])
 ```
 
 ## Recording a Live Meeting
@@ -271,11 +271,11 @@ video.index_spoken_words()
 
 # Now analyze as usual
 text = video.get_transcript_text()
-summary = coll.generate_text(
+result = coll.generate_text(
     prompt=f"Given this meeting transcript:\n{text}\n\nSummarize this meeting.",
     model_name="pro",
 )
-print(summary)
+print(result["output"])
 ```
 
 ## Cross-Meeting Search
@@ -313,7 +313,7 @@ transcript_text = standup.get_transcript_text()
 print(f"Transcript length: {len(transcript_text)} chars")
 
 # Full analysis
-report = coll.generate_text(
+result = coll.generate_text(
     prompt=(
         f"Given this daily standup transcript:\n{transcript_text}\n\n"
         "Provide:\n"
@@ -324,7 +324,7 @@ report = coll.generate_text(
     ),
     model_name="pro",
 )
-print(report)
+print(result["output"])
 ```
 
 ### Meeting Minutes with Auto-Subtitles
@@ -348,7 +348,7 @@ print(f"Meeting playback: {stream_url}")
 
 # Generate minutes
 text = meeting.get_transcript_text()
-minutes = coll.generate_text(
+result = coll.generate_text(
     prompt=(
         f"Given this meeting transcript:\n{text}\n\n"
         "Generate formal meeting minutes. Include:\n"
@@ -360,7 +360,7 @@ minutes = coll.generate_text(
     ),
     model_name="pro",
 )
-print(minutes)
+print(result["output"])
 ```
 
 ### Build a Searchable Meeting Archive

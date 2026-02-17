@@ -134,12 +134,12 @@ Use `coll.generate_text()` to run LLM analysis. This is a **Collection-level** m
 transcript_text = video.get_transcript_text()
 
 # Generate analysis using collection LLM
-summary = coll.generate_text(
+result = coll.generate_text(
     prompt=f"Summarize the key points discussed in this video:\n{transcript_text}",
     model_name="pro",
 )
 
-print(summary)
+print(result["output"])
 ```
 
 ### generate_text Parameters
@@ -150,7 +150,12 @@ print(summary)
 | `model_name` | `str` | `"basic"` | Model tier: `"basic"`, `"pro"`, or `"ultra"` |
 | `response_type` | `str` | `"text"` | Response format: `"text"` or `"json"` |
 
-Returns `str` when `response_type="text"`, or `dict` when `response_type="json"`.
+Returns a `dict` with an `output` key. When `response_type="text"`, `output` is a `str`. When `response_type="json"`, `output` is a `dict`.
+
+```python
+result = coll.generate_text(prompt="Summarize this", model_name="pro")
+print(result["output"])  # access the actual text/dict
+```
 
 ### Analyze Scenes with LLM
 
@@ -170,14 +175,14 @@ video.index_scenes(
 transcript_text = video.get_transcript_text()
 
 # Analyze with collection LLM
-analysis = coll.generate_text(
+result = coll.generate_text(
     prompt=(
         f"Given this video transcript:\n{transcript_text}\n\n"
         "Based on the spoken and visual content, describe the main topics covered."
     ),
     model_name="pro",
 )
-print(analysis)
+print(result["output"])
 ```
 
 ## Dubbing and Translation
@@ -236,13 +241,14 @@ video = coll.get_video("your-video-id")
 transcript_text = video.get_transcript_text()
 
 # Generate narration script using collection LLM
-script = coll.generate_text(
+result = coll.generate_text(
     prompt=(
         f"Write a professional narration script for this video content:\n"
         f"{transcript_text[:2000]}"
     ),
     model_name="pro",
 )
+script = result["output"]
 
 # Convert script to speech
 narration = coll.generate_voice(text=script)
@@ -299,9 +305,9 @@ result = coll.generate_text(
     response_type="json",
 )
 
-# result is a dict when response_type="json"
-print(result["summary"])
-print(result["topics"])
+# result["output"] is a dict when response_type="json"
+print(result["output"]["summary"])
+print(result["output"]["topics"])
 ```
 
 ## Tips
