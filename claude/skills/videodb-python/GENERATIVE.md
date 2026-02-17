@@ -25,7 +25,7 @@ image = coll.generate_image(
 
 # Access the generated image
 print(image.id)
-print(image.url)
+print(image.generate_url())  # returns a signed download URL
 ```
 
 ### generate_image Parameters
@@ -36,7 +36,9 @@ print(image.url)
 | `aspect_ratio` | `str` | `"1:1"` | Aspect ratio: `"1:1"`, `"9:16"`, `"16:9"`, `"4:3"`, or `"3:4"` |
 | `callback_url` | `str\|None` | `None` | URL to receive async callback |
 
-Returns an `Image` object with `.id`, `.url`, `.name`, and `.collection_id`.
+Returns an `Image` object with `.id`, `.name`, and `.collection_id`. Use `image.generate_url()` to get a signed download URL.
+
+> **Note:** Unlike `Video` objects (which use `.generate_stream()`), `Image` objects use `.generate_url()` to retrieve the image URL.
 
 ## Video Generation
 
@@ -254,7 +256,7 @@ thumbnail = coll.generate_image(
     prompt="professional video thumbnail showing data analytics dashboard, modern design",
     aspect_ratio="16:9",
 )
-print(f"Thumbnail URL: {thumbnail.url}")
+print(f"Thumbnail URL: {thumbnail.generate_url()}")
 ```
 
 ### Add Generated Music to Video

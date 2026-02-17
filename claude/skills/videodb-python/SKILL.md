@@ -26,11 +26,15 @@ An API key from [VideoDB Console](https://console.videodb.io) is required.
 
 ```python
 import videodb
+from dotenv import load_dotenv
+
+load_dotenv()  # loads VIDEO_DB_API_KEY from .env file
 
 # Option 1: .env file (recommended)
 # Copy .env.example to .env and fill in your key:
 #   cp .env.example .env
-# All scripts automatically load from .env via python-dotenv.
+# IMPORTANT: You must call load_dotenv() before videodb.connect()
+# so the API key is available as an environment variable.
 conn = videodb.connect()
 
 # Option 2: Environment variable
@@ -40,6 +44,8 @@ conn = videodb.connect()
 # Option 3: Pass directly
 conn = videodb.connect(api_key="your-api-key")
 ```
+
+> **Note:** The bundled scripts (e.g. `setup_venv.py`) load `.env` automatically, but when writing inline Python code you must call `load_dotenv()` yourself before `videodb.connect()`.
 
 If the `VIDEO_DB_API_KEY` environment variable is not set and no key is passed, prompt the user for it.
 
@@ -145,8 +151,15 @@ Index and search video content by spoken words or visual scenes.
 ```python
 video.index_spoken_words()
 results = video.search("your query")
-results.play()  # streams compiled matches
+
+# Get a streamable HLS URL for the matching segments
+stream_url = results.compile()
+
+# Or open directly in the browser
+results.play()
 ```
+
+> `results.compile()` returns an HLS stream URL. `results.play()` calls `compile()` internally and opens the URL in a browser.
 
 See [SEARCH.md](SEARCH.md) for the complete search and indexing guide.
 
@@ -229,11 +242,11 @@ Generate streamable HLS URLs from videos, timelines, and search results for live
 ### Quick Start
 
 ```python
-stream_url = video.generate_stream()
-# Or from a timeline composition
-stream_url = timeline.generate_stream()
-# Or from search results
-stream_url = results.compile()
+stream_url = video.generate_stream()     # from a video
+stream_url = timeline.generate_stream()  # from a timeline composition
+stream_url = results.compile()           # from search results
+
+# All return HLS (.m3u8) URLs playable in VLC or any HLS-compatible player.
 ```
 
 See [RTSTREAM.md](RTSTREAM.md) for the complete real-time streams guide.
