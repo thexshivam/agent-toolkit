@@ -51,7 +51,7 @@ coll = conn.get_collection()
 | `coll.generate_music(prompt, duration=5)` | `Audio` | Generate music with AI |
 | `coll.generate_sound_effect(prompt, duration=2)` | `Audio` | Generate sound effect |
 | `coll.generate_voice(text, voice_name="Default")` | `Audio` | Generate speech from text |
-| `coll.generate_text(prompt, model_name="basic")` | `dict` | LLM text generation (result in `["output"]` key) |
+| `coll.generate_text(prompt, model_name="basic")` | `dict` | LLM text generation — access result via `["output"]` |
 | `coll.dub_video(video_id, language_code)` | `Video` | Dub video into another language |
 | `coll.record_meeting(meeting_url, bot_name, ...)` | `Meeting` | Record a live meeting |
 | `coll.connect_rtstream(url, name, ...)` | `RTStream` | Connect to a live stream |
@@ -157,6 +157,7 @@ image = coll.get_image(image_id)
 | `image.id` | `str` | Unique image ID |
 | `image.collection_id` | `str` | Parent collection ID |
 | `image.name` | `str` | Image name |
+| `image.url` | `str\|None` | Image URL (may be `None` for generated images — use `generate_url()` instead) |
 
 ### Image Methods
 
@@ -347,8 +348,7 @@ from videodb import SearchType
 
 SearchType.semantic    # Natural language semantic search
 SearchType.keyword     # Exact keyword matching
-# Note: SearchType.scene is not currently supported by the API.
-# Use SearchType.semantic after index_scenes() to search visual content.
+SearchType.scene       # Visual scene search (may require paid plan)
 ```
 
 ### SceneExtractionType

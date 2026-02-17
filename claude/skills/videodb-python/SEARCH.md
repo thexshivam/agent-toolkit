@@ -82,19 +82,27 @@ Returns segments containing the exact keyword or phrase.
 
 ### Scene Search
 
-> **Note:** `SearchType.scene` is currently not supported by the API. Only `semantic` and `keyword` search types are available. To search visual content, index scenes with `index_scenes()` and then use `SearchType.semantic` to query the scene descriptions.
+Visual content queries matched against indexed scene descriptions:
 
 ```python
-# Index scenes first
-video.index_scenes(
-    extraction_type=SceneExtractionType.shot_based,
-    prompt="Describe the visual content in this scene.",
-)
+from videodb import SearchType, IndexType
 
-# Then use semantic search to query scene descriptions
+results = video.search(
+    query="person writing on a whiteboard",
+    search_type=SearchType.scene,
+    index_type=IndexType.scene,
+)
+```
+
+Requires prior `index_scenes()` call. Returns segments where the visual content matches the query.
+
+> **Note:** `SearchType.scene` may not be available on all plans (e.g. Free tier). If you get an error, use `SearchType.semantic` with `index_type=IndexType.scene` as an alternative:
+
+```python
 results = video.search(
     query="person writing on a whiteboard",
     search_type=SearchType.semantic,
+    index_type=IndexType.scene,
 )
 ```
 
