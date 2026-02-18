@@ -146,7 +146,7 @@ except InvalidRequestError as e:
 
 Index and search video content by spoken words or visual scenes.
 
-### Quick Start
+### Quick Start — Spoken Words
 
 ```python
 video.index_spoken_words()
@@ -159,7 +159,28 @@ stream_url = results.compile()
 results.play()
 ```
 
-> `results.compile()` returns an HLS stream URL. `results.play()` calls `compile()` internally and opens the URL in a browser.
+### Quick Start — Scene Search
+
+```python
+from videodb import SearchType, IndexType, SceneExtractionType
+
+# Index scenes (returns an index ID)
+scene_index_id = video.index_scenes(
+    extraction_type=SceneExtractionType.shot_based,
+    prompt="Describe the visual content in this scene.",
+)
+
+# Search using semantic search against the scene index
+results = video.search(
+    query="person writing on a whiteboard",
+    search_type=SearchType.semantic,
+    index_type=IndexType.scene,
+    scene_index_id=scene_index_id,
+)
+stream_url = results.compile()
+```
+
+> Use `SearchType.semantic` with `index_type=IndexType.scene` for scene search. Pass `scene_index_id` to target a specific index. `SearchType.scene` exists but may not be available on all plans.
 
 See [SEARCH.md](SEARCH.md) for the complete search and indexing guide.
 

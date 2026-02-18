@@ -82,29 +82,52 @@ Returns segments containing the exact keyword or phrase.
 
 ### Scene Search
 
-Visual content queries matched against indexed scene descriptions:
+Visual content queries matched against indexed scene descriptions. Requires a prior `index_scenes()` call.
+
+`index_scenes()` returns a `scene_index_id`. Pass it to `video.search()` to target a specific scene index (especially important when a video has multiple scene indexes):
+
+```python
+from videodb import SearchType, IndexType
+
+# Index scenes first (returns an index ID)
+scene_index_id = video.index_scenes(
+    extraction_type=SceneExtractionType.shot_based,
+    prompt="Describe the visual content in this scene.",
+)
+
+# Search using semantic search against the scene index
+results = video.search(
+    query="person writing on a whiteboard",
+    search_type=SearchType.semantic,
+    index_type=IndexType.scene,
+    scene_index_id=scene_index_id,
+)
+```
+
+**Important notes:**
+
+- Use `SearchType.semantic` with `index_type=IndexType.scene` — this is the most reliable combination and works on all plans.
+- `SearchType.scene` exists but may not be available on all plans (e.g. Free tier). Prefer `SearchType.semantic` with `IndexType.scene`.
+- The `scene_index_id` parameter is optional. If omitted, the search runs against all scene indexes on the video. Pass it to target a specific index.
+- You can create multiple scene indexes per video (with different prompts or extraction types) and search them independently using `scene_index_id`.
+
+### Scene Search with Metadata Filtering
+
+When indexing scenes with custom metadata, you can combine semantic search with metadata filters:
 
 ```python
 from videodb import SearchType, IndexType
 
 results = video.search(
-    query="person writing on a whiteboard",
-    search_type=SearchType.scene,
-    index_type=IndexType.scene,
-)
-```
-
-Requires prior `index_scenes()` call. Returns segments where the visual content matches the query.
-
-> **Note:** `SearchType.scene` may not be available on all plans (e.g. Free tier). If you get an error, use `SearchType.semantic` with `index_type=IndexType.scene` as an alternative:
-
-```python
-results = video.search(
-    query="person writing on a whiteboard",
+    query="a skillful chasing scene",
     search_type=SearchType.semantic,
     index_type=IndexType.scene,
+    scene_index_id=scene_index_id,
+    filter=[{"camera_view": "road_ahead"}, {"action_type": "chasing"}],
 )
 ```
+
+See the [scene_level_metadata_indexing cookbook](https://github.com/video-db/videodb-cookbook/blob/main/quickstart/scene_level_metadata_indexing.ipynb) for a full example of custom metadata indexing and filtered search.
 
 ## Working with Results
 

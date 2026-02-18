@@ -108,7 +108,7 @@ video = coll.get_video(video_id)
 | `video.get_transcript_text(start=None, end=None)` | `str` | Get full transcript text |
 | `video.generate_transcript(force=None)` | `str` | Generate transcript |
 | `video.translate_transcript(language, additional_notes)` | `list[dict]` | Translate transcript |
-| `video.search(query, search_type=SearchType.semantic)` | `SearchResult` | Search within video |
+| `video.search(query, search_type, index_type, scene_index_id, filter, ...)` | `SearchResult` | Search within video |
 | `video.add_subtitle(style=SubtitleStyle())` | `str` | Add subtitles (returns stream URL) |
 | `video.generate_thumbnail(time=None)` | `str\|Image` | Generate thumbnail |
 | `video.get_thumbnails()` | `list[Image]` | Get all thumbnails |
@@ -260,6 +260,25 @@ asset = CaptionAsset(
 ```
 
 See [EDITOR.md](EDITOR.md#caption-overlays) for full CaptionAsset usage with the Editor API.
+
+## Video Search Parameters
+
+```python
+results = video.search(
+    query="your query",
+    search_type=SearchType.semantic,       # semantic, keyword, or scene
+    index_type=IndexType.spoken_word,      # spoken_word or scene
+    result_threshold=None,                 # max number of results
+    score_threshold=None,                  # minimum relevance score
+    dynamic_score_percentage=None,         # percentage of dynamic score
+    scene_index_id=None,                   # target a specific scene index (pass via **kwargs)
+    filter=[],                             # metadata filters for scene search
+)
+```
+
+> **Note:** `scene_index_id` and `filter` are passed through `**kwargs` to the API. They are not explicit named parameters in the SDK method signature but are supported.
+
+For scene search, use `search_type=SearchType.semantic` with `index_type=IndexType.scene`. Pass `scene_index_id` when targeting a specific scene index. See [SEARCH.md](SEARCH.md) for details.
 
 ## SearchResult Object
 

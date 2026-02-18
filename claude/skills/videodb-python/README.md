@@ -42,23 +42,45 @@ Open `.env` and paste your key:
 VIDEO_DB_API_KEY=your-api-key-here
 ```
 
-### Step 4: Tell Claude Code where the skill is
+### Step 4: Install the skill into Claude Code
 
-Open Claude Code and add the path to the skill folder:
+Claude Code discovers skills from `.claude/skills/` directories. You can install at the **personal** level (available in all your projects) or the **project** level (available only in that project).
 
+#### Option A: Personal skill (recommended)
+
+```bash
+mkdir -p ~/.claude/skills
+ln -s /path/to/agent-toolkit/claude/skills/videodb-python ~/.claude/skills/videodb-python
 ```
-/add-dir /path/to/agent-toolkit/claude/skills/videodb-python
+
+This symlinks the skill so it stays in sync with the repo. You can also `cp -r` instead of `ln -s` if you prefer a copy.
+
+#### Option B: Project skill
+
+From your project root:
+
+```bash
+mkdir -p .claude/skills
+ln -s /path/to/agent-toolkit/claude/skills/videodb-python .claude/skills/videodb-python
 ```
+
+This makes the skill available only within that project.
 
 Replace `/path/to/` with the actual path on your machine.
 
-### Step 5: Use it for the first time
+> **Why not `/add-dir`?** Claude Code's `--add-dir` flag can load skills, but only if the added directory contains a `.claude/skills/` subdirectory (note the leading dot). This repo uses `claude/skills/` (no dot), so `/add-dir` will not discover the skill. Use the symlink or copy approach above instead.
 
-Just type `/videodb-python` followed by any task. On the first run, Claude Code will automatically set up the environment and install everything.
+If you used a symlink, the `.env` file you created in Step 3 is already in the right place. If you copied, make sure the `.env` file with your API key exists inside the destination `videodb-python/` folder.
+
+### Step 5: Verify and use
+
+Restart Claude Code (or start a new session), then type `/videodb-python` followed by any task. On the first run, Claude Code will automatically set up the Python environment and install dependencies.
 
 ```
 /videodb-python upload this YouTube video and give me a transcript
 ```
+
+You can also just describe what you want in natural language — Claude will load the skill automatically when it's relevant to video processing.
 
 That's it. Setup is done.
 
