@@ -1,5 +1,5 @@
 ---
-name: videodb-python
+name: videodb
 description: Process videos using VideoDB Python SDK. Upload local files, URLs, or YouTube videos. Transcode, add subtitles, generate transcripts and thumbnails, search within videos, and create video compilations. Use for Python projects working with video processing, video search, or video editing.
 allowed-tools: Read Grep Glob Bash(python:*)
 argument-hint: "[task description]"

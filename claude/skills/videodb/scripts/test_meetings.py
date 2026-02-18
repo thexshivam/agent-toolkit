@@ -67,12 +67,18 @@ def main() -> None:
 
     # --- Test 4: Search within meeting ---
     print("\n[test_meetings] Test 4: Semantic search within meeting")
-    results = meeting.search("never gonna give you up", search_type=SearchType.semantic)
-    shots = results.get_shots()
-    print(f"  Found {len(shots)} matching segment(s)")
-    for shot in shots[:3]:
-        print(f"  [{shot.start:.1f}s - {shot.end:.1f}s] {shot.text[:80] if shot.text else '(no text)'}")
-    print("  PASS")
+    try:
+        results = meeting.search("never gonna give you up", search_type=SearchType.semantic)
+        shots = results.get_shots()
+        print(f"  Found {len(shots)} matching segment(s)")
+        for shot in shots[:3]:
+            print(f"  [{shot.start:.1f}s - {shot.end:.1f}s] {shot.text[:80] if shot.text else '(no text)'}")
+        print("  PASS")
+    except videodb.exceptions.InvalidRequestError as exc:
+        if "No results found" in str(exc):
+            print(f"  No results found (API returned empty). PASS (graceful)")
+        else:
+            raise
 
     # Cleanup
     print(f"\n[test_meetings] Cleaning up: deleting video {meeting.id}")

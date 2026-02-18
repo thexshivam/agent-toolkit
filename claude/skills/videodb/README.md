@@ -34,7 +34,7 @@ Talk to your videos using natural language. Upload, search, edit, generate subti
 
 ```bash
 git clone https://github.com/video-db/agent-toolkit.git
-cd agent-toolkit/claude/skills/videodb-python
+cd agent-toolkit/claude/skills/videodb
 ```
 
 ### 2. Add your API key
@@ -75,10 +75,10 @@ Claude Code discovers skills from `.claude/skills/` directories. You need to sym
 
 ```bash
 mkdir -p ~/.claude/skills
-ln -s "$(pwd)" ~/.claude/skills/videodb-python
+ln -s "$(pwd)" ~/.claude/skills/videodb
 ```
 
-> Run this from inside the `agent-toolkit/claude/skills/videodb-python` directory.
+> Run this from inside the `agent-toolkit/claude/skills/videodb` directory.
 
 ### Option B: Project skill (single project)
 
@@ -86,7 +86,7 @@ From your project root:
 
 ```bash
 mkdir -p .claude/skills
-ln -s /path/to/agent-toolkit/claude/skills/videodb-python .claude/skills/videodb-python
+ln -s /path/to/agent-toolkit/claude/skills/videodb .claude/skills/videodb
 ```
 
 ### Start using it
@@ -94,7 +94,7 @@ ln -s /path/to/agent-toolkit/claude/skills/videodb-python .claude/skills/videodb
 Open Claude Code (or restart your session) and try:
 
 ```
-/videodb-python upload this YouTube video and give me a transcript
+/videodb upload this YouTube video and give me a transcript
 ```
 
 You can also just describe what you want -- Claude will load the skill automatically when the task involves video processing.
@@ -102,16 +102,16 @@ You can also just describe what you want -- Claude will load the skill automatic
 **More examples:**
 
 ```
-/videodb-python search for "product demo" in my latest video
+/videodb search for "product demo" in my latest video
 ```
 ```
-/videodb-python add subtitles to my video with white text on black background
+/videodb add subtitles to my video with white text on black background
 ```
 ```
-/videodb-python take clips from 10s-30s and 45s-60s, add a title card, and combine them
+/videodb take clips from 10s-30s and 45s-60s, add a title card, and combine them
 ```
 ```
-/videodb-python generate 30 seconds of background music and overlay it on my video
+/videodb generate 30 seconds of background music and overlay it on my video
 ```
 
 > **Why not `--add-dir`?** The `--add-dir` flag only discovers skills inside `.claude/skills/` subdirectories (note the leading dot). This repo uses `claude/skills/` (no dot), so `--add-dir` won't find it. Use the symlink approach above.
@@ -206,7 +206,7 @@ print(message.content[0].text)
 ## Project Structure
 
 ```
-videodb-python/
+videodb/
 ├── SKILL.md              # Skill definition (loaded by Claude Code)
 ├── REFERENCE.md          # Complete API reference
 ├── SEARCH.md             # Search and indexing guide
