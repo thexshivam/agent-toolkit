@@ -1,61 +1,86 @@
-# VideoDB Skill for Claude Code
+# VideoDB Agent Skill for Claude
 
-Talk to your videos using Claude Code. Upload, search, edit, generate subtitles, create clips — all with natural language.
+Talk to your videos using natural language. Upload, search, edit, generate subtitles, create clips, and more.
 
-## What Can It Do?
-
-- **Upload** videos from YouTube, URLs, or your local files
-- **Search** inside videos by what was said or what was shown
-- **Transcripts** — get timestamped text from any video
-- **Edit** — combine clips, add text/image/audio overlays
-- **Subtitles** — auto-generate and style them
-- **AI Generate** — create images, video, music, voiceovers from text
-- **Meetings** — upload recordings, get summaries and action items
-- **Stream** — get playable HLS links for anything you build
+> Built on the [VideoDB Python SDK](https://github.com/video-db/videodb-python) | Works with **Claude Code**, **Claude Web**, and the **Claude API**
 
 ---
 
-## Setup (First Time Only)
+## What You Can Do
 
-### Step 1: Clone the repo
+| Capability | Description |
+|---|---|
+| **Upload** | Ingest videos from YouTube, URLs, or local files |
+| **Search** | Find moments by what was said (speech) or what was shown (scenes) |
+| **Transcripts** | Generate timestamped transcripts from any video |
+| **Edit** | Combine clips, trim, add text/image/audio overlays |
+| **Subtitles** | Auto-generate and style subtitles |
+| **AI Generate** | Create images, video, music, sound effects, and voiceovers from text |
+| **Meetings** | Record meetings, extract transcripts, get summaries and action items |
+| **Stream** | Get playable HLS links for anything you build |
+
+---
+
+## Prerequisites
+
+- **Python 3.9+**
+- **VideoDB API key** -- sign up free at [console.videodb.io](https://console.videodb.io) (50 free uploads, no credit card)
+
+---
+
+## Quick Start
+
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/video-db/agent-toolkit.git
+cd agent-toolkit/claude/skills/videodb-python
 ```
 
-### Step 2: Get your API key
-
-Go to [console.videodb.io](https://console.videodb.io), sign up, and copy your API key.
-
-### Step 3: Add your API key
-
-Go into the skill folder and create a `.env` file:
+### 2. Add your API key
 
 ```bash
-cd agent-toolkit/claude/skills/videodb-python
 cp .env.example .env
 ```
 
-Open `.env` and paste your key:
+Open `.env` and replace the placeholder with your key:
 
-```
+```ini
 VIDEO_DB_API_KEY=your-api-key-here
 ```
 
-### Step 4: Install the skill into Claude Code
+### 3. Set up the Python environment
 
-Claude Code discovers skills from `.claude/skills/` directories. You can install at the **personal** level (available in all your projects) or the **project** level (available only in that project).
+```bash
+python scripts/setup_venv.py
+```
 
-#### Option A: Personal skill (recommended)
+This creates a `.venv/` directory and installs all dependencies. You only need to do this once.
+
+### 4. Verify the connection
+
+```bash
+.venv/bin/python scripts/check_connection.py
+```
+
+If you see a success message, you're ready to go.
+
+---
+
+## Using with Claude Code
+
+Claude Code discovers skills from `.claude/skills/` directories. You need to symlink (or copy) the skill folder into one of these locations.
+
+### Option A: Personal skill (all projects)
 
 ```bash
 mkdir -p ~/.claude/skills
-ln -s /path/to/agent-toolkit/claude/skills/videodb-python ~/.claude/skills/videodb-python
+ln -s "$(pwd)" ~/.claude/skills/videodb-python
 ```
 
-This symlinks the skill so it stays in sync with the repo. You can also `cp -r` instead of `ln -s` if you prefer a copy.
+> Run this from inside the `agent-toolkit/claude/skills/videodb-python` directory.
 
-#### Option B: Project skill
+### Option B: Project skill (single project)
 
 From your project root:
 
@@ -64,89 +89,180 @@ mkdir -p .claude/skills
 ln -s /path/to/agent-toolkit/claude/skills/videodb-python .claude/skills/videodb-python
 ```
 
-This makes the skill available only within that project.
+### Start using it
 
-Replace `/path/to/` with the actual path on your machine.
-
-> **Why not `/add-dir`?** Claude Code's `--add-dir` flag can load skills, but only if the added directory contains a `.claude/skills/` subdirectory (note the leading dot). This repo uses `claude/skills/` (no dot), so `/add-dir` will not discover the skill. Use the symlink or copy approach above instead.
-
-If you used a symlink, the `.env` file you created in Step 3 is already in the right place. If you copied, make sure the `.env` file with your API key exists inside the destination `videodb-python/` folder.
-
-### Step 5: Verify and use
-
-Restart Claude Code (or start a new session), then type `/videodb-python` followed by any task. On the first run, Claude Code will automatically set up the Python environment and install dependencies.
+Open Claude Code (or restart your session) and try:
 
 ```
 /videodb-python upload this YouTube video and give me a transcript
 ```
 
-You can also just describe what you want in natural language — Claude will load the skill automatically when it's relevant to video processing.
+You can also just describe what you want -- Claude will load the skill automatically when the task involves video processing.
 
-That's it. Setup is done.
+**More examples:**
+
+```
+/videodb-python search for "product demo" in my latest video
+```
+```
+/videodb-python add subtitles to my video with white text on black background
+```
+```
+/videodb-python take clips from 10s-30s and 45s-60s, add a title card, and combine them
+```
+```
+/videodb-python generate 30 seconds of background music and overlay it on my video
+```
+
+> **Why not `--add-dir`?** The `--add-dir` flag only discovers skills inside `.claude/skills/` subdirectories (note the leading dot). This repo uses `claude/skills/` (no dot), so `--add-dir` won't find it. Use the symlink approach above.
 
 ---
 
-## After Setup
+## Using with Claude Web (claude.ai)
 
-Once it's set up, you don't need to do anything special. Just use `/videodb-python` and ask for what you want. The skill handles the rest.
+You can use VideoDB with Claude on the web by giving it the SDK reference as project context.
 
-### Examples
+### Setup
 
-```
-/videodb-python upload https://www.youtube.com/watch?v=VIDEO_ID and search for "product demo"
-```
-
-```
-/videodb-python add subtitles to my latest video
-```
+1. Create a new [Claude Project](https://claude.ai)
+2. In the project knowledge, add the contents of these files:
+   - [`SKILL.md`](SKILL.md) -- core SDK reference and quick-start patterns
+   - [`REFERENCE.md`](REFERENCE.md) -- full API reference
+3. Set the project system prompt to:
 
 ```
-/videodb-python generate a 30 second background music track
+You are a video processing assistant using the VideoDB Python SDK.
+Use the provided reference documentation to write correct Python code.
+Always use `from dotenv import load_dotenv; load_dotenv()` before `videodb.connect()`.
 ```
 
-```
-/videodb-python summarize this meeting recording with action items
+### Usage
+
+Ask Claude to write Python scripts for your video tasks:
+
+- *"Write a Python script that uploads this YouTube video and generates a transcript."*
+- *"Create a script that searches for 'product launch' in a video and compiles the matching clips."*
+- *"Build a timeline that combines three video clips with a title overlay and background music."*
+
+Claude will generate standalone Python scripts you can run locally with:
+
+```bash
+.venv/bin/python your_script.py
 ```
 
+---
+
+## Using with the Claude API
+
+Use the VideoDB skill as a system prompt for programmatic access via the [Anthropic SDK](https://docs.anthropic.com/en/api/getting-started).
+
+### Setup
+
+1. Read `SKILL.md` and `REFERENCE.md` into your system prompt
+2. Send user messages describing video tasks
+3. Execute the generated Python code in your environment
+
+### Example
+
+```python
+import anthropic
+
+# Load the skill reference as system context
+with open("SKILL.md") as f:
+    skill_context = f.read()
+with open("REFERENCE.md") as f:
+    reference_context = f.read()
+
+client = anthropic.Anthropic()
+
+message = client.messages.create(
+    model="claude-sonnet-4-20250514",
+    max_tokens=4096,
+    system=f"""You are a video processing assistant using the VideoDB Python SDK.
+Write correct, runnable Python code based on user requests.
+
+{skill_context}
+
+{reference_context}""",
+    messages=[
+        {
+            "role": "user",
+            "content": "Upload this YouTube video and search for mentions of 'AI': https://www.youtube.com/watch?v=VIDEO_ID"
+        }
+    ],
+)
+
+print(message.content[0].text)
 ```
-/videodb-python take clips from 10s-30s and 45s-60s and combine them
+
+### Tips
+
+- Include `SEARCH.md` or `EDITOR.md` in the system prompt when your use case focuses on search or editing
+- For token efficiency, use only `SKILL.md` for general tasks -- it covers the most common operations
+- Add `GENERATIVE.md` when you need AI-generated media (images, music, voice)
+
+---
+
+## Project Structure
+
 ```
+videodb-python/
+├── SKILL.md              # Skill definition (loaded by Claude Code)
+├── REFERENCE.md          # Complete API reference
+├── SEARCH.md             # Search and indexing guide
+├── EDITOR.md             # Timeline editing guide
+├── GENERATIVE.md         # AI generation guide
+├── MEETINGS.md           # Meeting recording and analysis
+├── RTSTREAM.md           # Real-time streaming guide
+├── USE_CASES.md          # End-to-end workflow examples
+├── requirements.txt      # Python dependencies
+├── .env.example          # Environment variable template
+└── scripts/
+    ├── setup_venv.py         # Virtual environment setup
+    ├── setup.py              # Dependency checker
+    ├── check_connection.py   # API key verification
+    ├── batch_upload.py       # Bulk upload from URL list or directory
+    ├── search_and_compile.py # Search + compile into stream
+    ├── extract_clips.py      # Extract clips by timestamp
+    ├── test_editor.py        # Integration test: timeline editing
+    ├── test_meetings.py      # Integration test: meeting analysis
+    └── test_rtstream.py      # Integration test: streaming
+```
+
+---
+
+## Documentation
+
+| Guide | What's Inside |
+|---|---|
+| [SKILL.md](SKILL.md) | Skill definition and quick reference |
+| [REFERENCE.md](REFERENCE.md) | Complete API reference for all objects and methods |
+| [SEARCH.md](SEARCH.md) | Semantic, keyword, and scene-based search |
+| [EDITOR.md](EDITOR.md) | Timeline editing with overlays, limitations |
+| [GENERATIVE.md](GENERATIVE.md) | AI-generated images, video, music, voice, and text |
+| [MEETINGS.md](MEETINGS.md) | Meeting recording, transcription, and analysis |
+| [RTSTREAM.md](RTSTREAM.md) | Real-time HLS streaming |
+| [USE_CASES.md](USE_CASES.md) | End-to-end workflow examples |
 
 ---
 
 ## Utility Scripts
 
-These are helper scripts you can also run directly if needed:
+Run these directly for common tasks:
 
-| Script | What it does |
-|--------|-------------|
-| `scripts/setup_venv.py` | Sets up Python environment (runs automatically) |
-| `scripts/check_connection.py` | Tests if your API key works |
-| `scripts/batch_upload.py` | Upload many files at once |
-| `scripts/search_and_compile.py` | Search inside a video and compile results |
-| `scripts/extract_clips.py` | Cut out clips by timestamps |
+```bash
+# Upload multiple files from a URL list
+.venv/bin/python scripts/batch_upload.py --urls urls.txt --collection "My Project"
+
+# Search inside a video and compile results
+.venv/bin/python scripts/search_and_compile.py --video-id VIDEO_ID --query "product demo"
+
+# Extract clips by timestamp ranges
+.venv/bin/python scripts/extract_clips.py --video-id VIDEO_ID --timestamps "10.0-25.0,45.0-60.0"
+```
 
 ---
 
-## Guides
-
-Want to go deeper? Check these out:
-
-| Guide | What's inside |
-|-------|----------|
-| [REFERENCE.md](REFERENCE.md) | Full API reference |
-| [SEARCH.md](SEARCH.md) | Search and indexing |
-| [EDITOR.md](EDITOR.md) | Timeline editing |
-| [GENERATIVE.md](GENERATIVE.md) | AI-generated media |
-| [MEETINGS.md](MEETINGS.md) | Meeting analysis |
-| [RTSTREAM.md](RTSTREAM.md) | Real-time streaming |
-| [USE_CASES.md](USE_CASES.md) | Full workflow examples |
-
-## Requirements
-
-- Python 3.9 or higher
-- A VideoDB API key — [get one here](https://console.videodb.io)
-
 ## License
 
-This skill is provided as-is for use with Claude Code. The VideoDB SDK is governed by its own [license](https://github.com/video-db/videodb-python/blob/main/LICENSE).
+This skill is provided as-is for use with Claude. The VideoDB SDK is governed by its own [license](https://github.com/video-db/videodb-python/blob/main/LICENSE).

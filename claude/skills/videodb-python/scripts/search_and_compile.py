@@ -114,6 +114,11 @@ def main() -> None:
         else:
             coll = conn.get_collection(args.collection_id)
             print(f"[search_compile] Collection: {coll.id}")
+            if args.search_type != "semantic":
+                print(f"[search_compile] ERROR: Collection-level search only supports 'semantic'. "
+                      f"'{args.search_type}' search is only available on individual videos (use --video-id).",
+                      file=sys.stderr)
+                sys.exit(1)
             print(f"[search_compile] Searching for: \"{args.query}\" (type: {args.search_type})")
             results = run_search(coll, args.query, search_type_map[args.search_type])
 

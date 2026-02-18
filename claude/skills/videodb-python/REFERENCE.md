@@ -45,7 +45,7 @@ coll = conn.get_collection()
 | `coll.get_images()` | `list[Image]` | List all images |
 | `coll.get_image(image_id)` | `Image` | Get specific image |
 | `coll.upload(url=None, file_path=None, media_type=None, name=None)` | `Video\|Audio\|Image` | Upload media |
-| `coll.search(query, search_type, index_type=None)` | `SearchResult` | Search across collection |
+| `coll.search(query, search_type, index_type=IndexType.spoken_word)` | `SearchResult` | Search across collection (semantic only; keyword and scene search raise `NotImplementedError`) |
 | `coll.generate_image(prompt, aspect_ratio="1:1")` | `Image` | Generate image with AI |
 | `coll.generate_video(prompt, duration=5)` | `Video` | Generate video with AI |
 | `coll.generate_music(prompt, duration=5)` | `Audio` | Generate music with AI |
@@ -106,7 +106,7 @@ video = coll.get_video(video_id)
 | `video.index_audio(prompt, model_name, ...)` | `str` | Index audio with LLM (returns scene_index_id) |
 | `video.get_transcript(start=None, end=None)` | `list[dict]` | Get timestamped transcript |
 | `video.get_transcript_text(start=None, end=None)` | `str` | Get full transcript text |
-| `video.generate_transcript(force=None)` | `str` | Generate transcript |
+| `video.generate_transcript(force=None)` | `dict` | Generate transcript |
 | `video.translate_transcript(language, additional_notes)` | `list[dict]` | Translate transcript |
 | `video.search(query, search_type, index_type, scene_index_id, filter, ...)` | `SearchResult` | Search within video |
 | `video.add_subtitle(style=SubtitleStyle())` | `str` | Add subtitles (returns stream URL) |
@@ -276,7 +276,7 @@ results = video.search(
 )
 ```
 
-> **Note:** `scene_index_id` and `filter` are passed through `**kwargs` to the API. They are not explicit named parameters in the SDK method signature but are supported.
+> **Note:** `filter` is an explicit named parameter in `video.search()`. `scene_index_id` is passed through `**kwargs` to the API.
 
 For scene search, use `search_type=SearchType.semantic` with `index_type=IndexType.scene`. Pass `scene_index_id` when targeting a specific scene index. See [SEARCH.md](SEARCH.md) for details.
 
@@ -423,9 +423,9 @@ from videodb import (
     IndexType,          # spoken_word, scene
     MediaType,          # video, audio, image
     Segmenter,          # word, sentence, time
-    SegmentationType,   # sentence, word
-    TranscodeMode,      # economy, standard
-    ResizeMode,         # crop, pad, stretch
+    SegmentationType,   # sentence, llm
+    TranscodeMode,      # economy, lightning
+    ResizeMode,         # crop, fit, pad
     ReframeMode,        # simple, smart
     RTStreamChannelType,
 )

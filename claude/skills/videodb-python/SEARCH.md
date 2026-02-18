@@ -185,6 +185,8 @@ for shot in results.get_shots():
     print(f"Video: {shot.video_id} [{shot.start:.1f}s - {shot.end:.1f}s]")
 ```
 
+> **Note:** Collection-level search only supports `SearchType.semantic`. Using `SearchType.keyword` or `SearchType.scene` with `coll.search()` will raise `NotImplementedError`. For keyword or scene search, use `video.search()` on individual videos instead.
+
 ## Search + Compilation Workflow
 
 For a complete automated workflow, use the helper script:

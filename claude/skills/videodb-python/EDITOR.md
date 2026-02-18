@@ -64,8 +64,8 @@ timeline.add_inline(clip)
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `asset_id` | `str` | required | Video media ID |
-| `start` | `int` | `0` | Trim start (seconds) |
-| `end` | `int\|None` | `None` | Trim end (`None` = full) |
+| `start` | `float` | `0` | Trim start (seconds) |
+| `end` | `float\|None` | `None` | Trim end (`None` = full) |
 
 ## Text Overlays
 
@@ -145,11 +145,11 @@ timeline.add_overlay(0, audio_layer)
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `asset_id` | `str` | required | Audio media ID |
-| `start` | `int` | `0` | Trim start (seconds) |
-| `end` | `int\|None` | `None` | Trim end (`None` = full) |
+| `start` | `float` | `0` | Trim start (seconds) |
+| `end` | `float\|None` | `None` | Trim end (`None` = full) |
 | `disable_other_tracks` | `bool` | `True` | When True, mutes other audio tracks |
-| `fade_in_duration` | `int` | `0` | Fade-in seconds (max 5) |
-| `fade_out_duration` | `int` | `0` | Fade-out seconds (max 5) |
+| `fade_in_duration` | `float` | `0` | Fade-in seconds (max 5) |
+| `fade_out_duration` | `float` | `0` | Fade-out seconds (max 5) |
 
 ## Image Overlays
 

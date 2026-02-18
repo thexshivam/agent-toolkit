@@ -201,7 +201,7 @@ print(f"All action-item segments: {stream_url}")
 For meetings with screen shares, presentations, or whiteboard content, index scenes to enable visual search:
 
 ```python
-from videodb import SceneExtractionType
+from videodb import SceneExtractionType, SearchType, IndexType
 
 # Index visual scenes
 meeting.index_scenes(
@@ -213,7 +213,8 @@ meeting.index_scenes(
 # Search by visual content
 results = meeting.search(
     "presentation slide with chart",
-    search_type=SearchType.scene,
+    search_type=SearchType.semantic,
+    index_type=IndexType.scene,
 )
 ```
 
