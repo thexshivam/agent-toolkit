@@ -18,7 +18,6 @@
     <a href="https://videodb.io/llms.txt"><strong>llms.txt >></strong></a> 
     <a href="https://videodb.io/llms-full.txt"><strong>llms-full.txt</strong></a>  <br />
     <a href="https://videodb.io/mcp"><strong>MCP</strong></a>
-    <a href="https://github.com/video-db/agent-toolkit/tree/main/claude/skills/videodb"><strong>Claude Skill</strong></a>
     <br />
   </p>
 </p>
@@ -110,16 +109,6 @@ If you always want to use the latest version of the MCP server, update your comm
 ```
 uvx videodb-director-mcp@latest --api-key=<VIDEODB_API_KEY>
 ```
-
-<br/>
-
-### 4. Claude Skill
-
----
-
-A native [Claude Code skill](https://github.com/video-db/agent-toolkit/tree/main/claude/skills/videodb) that lets you work with videos directly from Claude using the `/videodb` command. Upload, search, edit, add subtitles, generate transcripts, and more — all through natural language.
-
-See the [Claude skill README](claude/skills/videodb/README.md) for setup and usage instructions.
 
 <br/>
 
